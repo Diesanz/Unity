@@ -11,18 +11,18 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Subterrain0
+  - Subterrain1
+  - Subterrain2
+  - Subterrain3
+  - Subterrain4
+  - Subterrain5
+  - Subterrain6
+  - Terrain
+  - Solid
+  - Interactables
+  - Player
+  - NPc
   - 
   - 
   - 
@@ -40,4 +40,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Fondo
+    uniqueID: 1900585615
+    locked: 0
+  - name: BackGround
+    uniqueID: 354769205
+    locked: 0
+  - name: Buildings
+    uniqueID: 130717005
+    locked: 0
+  - name: Objects
+    uniqueID: 2208489513
+    locked: 0
+  - name: Characters
+    uniqueID: 2967436597
     locked: 0
