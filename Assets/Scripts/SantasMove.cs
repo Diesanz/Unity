@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class SantasMove : MonoBehaviour
 {   
-    public float speed;
-    public float jumpForce; // Fuerza del salto
+    public float speed;         // Velocidad de movimiento
+    public float jumpForce;     // Fuerza del salto
+    public bool jumpForcex2 = false;  // Activar doble salto (opcional)
+    public float fallMultiplier = 2.5f; // Multiplicador para caídas rápidas
+    public float lowJumpMultiplier = 2f; // Multiplicador para saltos cortos
 
     private Vector2 input;
+    private Rigidbody2D rb2D;    // Referencia al Rigidbody2D para controlar física
 
-    private Rigidbody2D rb2D; // Rigidbody para el salto
+    
 
     private void Awake()
     {
@@ -38,6 +42,18 @@ public class SantasMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && CheckGround.isGround)
         {
             rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Cambiar solo el eje Y para saltar
+        }
+
+        // Manejo de la caída y salto prolongado
+        if (rb2D.velocity.y < 0)
+        {
+            // Caída rápida
+            rb2D.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+        }
+        else if (rb2D.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
+        {
+            // Salto más corto si no se mantiene presionada la tecla de salto
+            rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
     }
 }
