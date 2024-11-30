@@ -7,14 +7,16 @@ public class SantasMove : MonoBehaviour
 {   
     public float speed;         // Velocidad de movimiento
     public float jumpForce;     // Fuerza del salto
-    public bool jumpForcex2 = false;  // Activar doble salto (opcional)
     public float fallMultiplier = 2.5f; // Multiplicador para caídas rápidas
     public float lowJumpMultiplier = 2f; // Multiplicador para saltos cortos
 
     private Vector2 input;
-    private Rigidbody2D rb2D;    // Referencia al Rigidbody2D para controlar física
+    private Rigidbody2D rb2D;   // Referencia al Rigidbody2D para controlar física
+    private bool isJumpingAnimation = false;     // Indica si el jugador está saltando
+    private bool isWalking;
 
-    
+    public SpriteRenderer spriteRenderer;
+    public Animator animator;
 
     private void Awake()
     {
@@ -24,24 +26,42 @@ public class SantasMove : MonoBehaviour
     private void Update()
     {
         // Obtén la entrada del jugador
-        input.x = Input.GetAxisRaw("Horizontal");
-        input.y = Input.GetAxisRaw("Vertical");
+        input.x = Input.GetAxisRaw("Horizontal"); //Solo movimiento en el eje x
 
-        // Permite movimiento en una dirección a la vez
-        if (input.x != 0) input.y = 0;
-
-        // Mueve el jugador si hay entrada
-        if (input != Vector2.zero)
+        // Cambiar velocidad del Rigidbody2D
+        rb2D.velocity = new Vector2(input.x * speed, rb2D.velocity.y);
+        // Invierte sprite renderer
+        if (input.x != 0)
         {
-            // Calcula la nueva posición y mueve al jugador
-            Vector3 targetPos = transform.position + new Vector3(input.x, input.y, 0);
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+            spriteRenderer.flipX = input.x < 0;
+            isWalking = true;
+        }    
+        else{
+            isWalking = false;
         }
         
-        // Salto
-        if (Input.GetKeyDown(KeyCode.Space) && CheckGround.isGround)
+        //Animacion movimiento
+        animator.SetBool("Walk", isWalking);
+        
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            
+        // Control del salto
+        if (Input.GetKeyDown(KeyCode.Space) && CheckGround.isGround) 
         {
-            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Cambiar solo el eje Y para saltar
+            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
+
+        }
+
+        // Mientras esté en el aire (descendiendo o ascendiendo)
+        if (!CheckGround.isGround) 
+        {
+            animator.SetBool("Jump", true);
+            animator.SetBool("Walk", false);
+        }
+        else
+        {
+            // Si el personaje ha tocado el suelo, detener la animación de salto
+            animator.SetBool("Jump", false);
         }
 
         // Manejo de la caída y salto prolongado
@@ -56,4 +76,5 @@ public class SantasMove : MonoBehaviour
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
     }
+
 }

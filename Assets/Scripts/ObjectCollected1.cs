@@ -8,11 +8,14 @@ public class ObjectCollected1 : MonoBehaviour
     private bool isCollected = false; // Verifica si la fruta ya fue recolectada
 
     public string collectAnimationTrigger = "Recolect"; // Nombre del Trigger de la animación de explosión
+    private ObjectsManager objectsManager;
 
     private void Start()
     {
         // Obtiene el componente Animator, gameObject representa el objeto obtenido 
         animator = GetComponent<Animator>();
+        // Guardar una referencia al ObjectsManager para evitar llamar a FindObjectOfType repetidamente
+        objectsManager = FindObjectOfType<ObjectsManager>();
     }
 
     // Detectar cuando el jugador entra en contacto con la fruta
