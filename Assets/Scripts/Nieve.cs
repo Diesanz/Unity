@@ -1,41 +1,33 @@
 using UnityEngine;
-
-public class InfiniteBackgroundVertical : MonoBehaviour
+//Control del movimiento vertical del fondo
+//Cuando un fondo llega al final endHeight se resetea y aparece en resetHeight
+public class InfiniteScrolling : MonoBehaviour
 {
-    public float scrollSpeed = 2f; // Velocidad de movimiento del fondo
-    public float resetPositionY1 = -1.7757f; // Posición Y en la que el primer fondo se reinicia
-    public float resetPositionY2 = 7.55f; // Posición Y en la que el segundo fondo se reinicia
-    public float startPositionY1 = 4.47f; // Posición Y inicial del primer fondo
-    public float startPositionY2 = 15.3f; // Posición Y inicial del segundo fondo
+    public float scrollSpeed = 2f; // Velocidad a la que se mueve el fondo
+    public float resetHeight; // La altura donde el fondo debe reiniciarse 
+    public float endHeight; // La altura donde el fondo termina su recorrido 
 
-    private Vector3 startPos1;
-    private Vector3 startPos2;
+    private Vector3 startPosition; // Posición inicial del fondo
 
+    /*
+    *Para no superponer fondos al principio se colocan encima unos de otros
+    *Ambos se mueven a la vez
+    */
     void Start()
     {
-        // Establece la posición inicial para ambos fondos
-        startPos1 = new Vector3(transform.position.x, startPositionY1, transform.position.z);
-        startPos2 = new Vector3(transform.position.x, startPositionY2, transform.position.z);
-
-        // Asegúrate de que los fondos empiecen en la posición correcta
-        transform.position = startPos1; // Al principio se posiciona el primer fondo
+        // Guardamos la posición inicial del fondo
+        startPosition = transform.position;
     }
 
     void Update()
     {
-        // Desplaza el fondo hacia abajo
-        transform.Translate(Vector2.down * scrollSpeed * Time.deltaTime);
+        // Mueve el fondo hacia abajo
+        transform.Translate(Vector3.down * scrollSpeed * Time.deltaTime);
 
-        // Cuando el primer fondo sale de la pantalla, reposiciónalo
-        if (transform.position.y <= resetPositionY1)
+        // Si el fondo alcanza el final de su recorrido, se reinicia
+        if (transform.position.y <= endHeight)
         {
-            transform.position = startPos2; // Coloca el fondo al principio del segundo fondo
-        }
-
-        // Cuando el segundo fondo sale de la pantalla, reposiciónalo
-        if (transform.position.y <= resetPositionY2 && transform.position == startPos2)
-        {
-            transform.position = startPos1; // Coloca el fondo al principio del primer fondo
+            transform.position = new Vector3(transform.position.x, resetHeight, transform.position.z);
         }
     }
 }
