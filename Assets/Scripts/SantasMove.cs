@@ -6,17 +6,20 @@ using UnityEngine;
 public class SantasMove : MonoBehaviour
 {   
     public float speed;         // Velocidad de movimiento
-    public float jumpForce;     // Fuerza del salto
-    public float fallMultiplier = 2.5f; // Multiplicador para caídas rápidas
+    public float jumpForce = 8;     // Fuerza del salto
+    public float doubleJumpForce = 6;
+    private bool canDoubleJump;
+    public float fallMultiplier = 2f; // Multiplicador para caídas rápidas
     public float lowJumpMultiplier = 2f; // Multiplicador para saltos cortos
 
     private Vector2 input;
     private Rigidbody2D rb2D;   // Referencia al Rigidbody2D para controlar física
-    private bool isJumpingAnimation = false;     // Indica si el jugador está saltando
     private bool isWalking;
 
     public SpriteRenderer spriteRenderer;
     public Animator animator;
+    private float fallDelay = 0.5f; // Tiempo en segundos antes de activar "Falling"
+    private float fallTimer;        // Temporizador para la caída
 
     private void Awake()
     {
@@ -46,9 +49,29 @@ public class SantasMove : MonoBehaviour
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             
         // Control del salto
-        if (Input.GetKeyDown(KeyCode.Space) && CheckGround.isGround) 
+        if (Input.GetKeyDown(KeyCode.Space) ) 
         {
-            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
+            if (CheckGround.isGround) //si pulsamos espacio y estamos en suelo, se salta
+            {
+                canDoubleJump = true;
+                rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
+            }
+            else
+            {
+                if(Input.GetKeyDown(KeyCode.Space))
+                {
+                    if(canDoubleJump)
+                    {
+                        canDoubleJump = false;
+                        rb2D.velocity = new Vector2(rb2D.velocity.x, doubleJumpForce); // Aplicar salto doble   
+                        animator.SetBool("DoubleJump", true);
+                    }
+                }
+                else
+                {
+                    rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
+                }
+            }
 
         }
 
@@ -62,6 +85,28 @@ public class SantasMove : MonoBehaviour
         {
             // Si el personaje ha tocado el suelo, detener la animación de salto
             animator.SetBool("Jump", false);
+            animator.SetBool("DoubleJump", false);
+            animator.SetBool("Falling", false);
+        }
+
+
+        if (rb2D.velocity.y < 0)
+        {
+            // Iniciar el temporizador para la caída
+            fallTimer += Time.deltaTime;
+            
+            if (fallTimer >= fallDelay)
+            {
+                canDoubleJump = false;
+                animator.SetBool("Falling", true);
+                
+            }
+        }
+        else if (rb2D.velocity.y > 0)
+        {
+            // Resetea el temporizador si aún está subiendo
+            fallTimer = 0;
+            animator.SetBool("Falling", false);
         }
 
         // Manejo de la caída y salto prolongado

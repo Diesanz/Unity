@@ -8,11 +8,17 @@ public class CheckGround : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collisiom)
     {
-        isGround = true;
+        if(collisiom.CompareTag("Ground"))
+        {
+            isGround = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collisiom)
     {
-        isGround = false;
+        if(collisiom.CompareTag("Ground"))
+        {
+            isGround = false;
+        }
     }
 }
