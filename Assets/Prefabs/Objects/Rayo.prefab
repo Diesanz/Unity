@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8046875861539057544}
   - component: {fileID: 4196152393359041150}
   - component: {fileID: 1389330474868737659}
-  m_Layer: 15
+  m_Layer: 9
   m_Name: Rayo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.57912135, y: 0.6507177}
+    oldSize: {x: 0.73355377, y: 0.8242425}
     newSize: {x: 0.57912135, y: 0.6507177}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
