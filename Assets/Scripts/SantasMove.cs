@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class SantasMove : MonoBehaviour
 {   
-    public float speed;         // Velocidad de movimiento
+    public float speed;          // Velocidad de movimiento andar
+    public float runspeed; // Velocidad de movimiento correr
     public float jumpForce = 8;     // Fuerza del salto
     public float doubleJumpForce = 6;
     private bool canDoubleJump;
@@ -15,11 +16,15 @@ public class SantasMove : MonoBehaviour
     private Vector2 input;
     private Rigidbody2D rb2D;   // Referencia al Rigidbody2D para controlar física
     private bool isWalking;
+    private bool isRunning;
+    private bool isSlicing;
 
     public SpriteRenderer spriteRenderer;
     public Animator animator;
     private float fallDelay = 0.5f; // Tiempo en segundos antes de activar "Falling"
     private float fallTimer;        // Temporizador para la caída
+    private float doubleJumpTimer;
+    public float minTimeJump = 0.2f;   // Tiempo mínimo antes de permitir el doble salto
 
     private void Awake()
     {
@@ -31,23 +36,51 @@ public class SantasMove : MonoBehaviour
         // Obtén la entrada del jugador
         input.x = Input.GetAxisRaw("Horizontal"); //Solo movimiento en el eje x
 
+        isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        float currentSpeed = isRunning ? runspeed : speed;
         // Cambiar velocidad del Rigidbody2D
-        rb2D.velocity = new Vector2(input.x * speed, rb2D.velocity.y);
+        rb2D.velocity = new Vector2(input.x * currentSpeed, rb2D.velocity.y);
         // Invierte sprite renderer
         if (input.x != 0)
         {
             spriteRenderer.flipX = input.x < 0;
-            isWalking = true;
+            isWalking = !isRunning;
+            if (Input.GetKeyDown(KeyCode.F) && (isWalking || isRunning))
+            {
+                isWalking = false;
+                isRunning = false;
+                isSlicing = true;
+            }
+            else if (!Input.GetKey(KeyCode.F) || input.x == 0) // Detén el deslizamiento si se suelta F o no hay movimiento horizontal
+            {
+                isSlicing = false;
+            }
+            
         }    
         else{
             isWalking = false;
+            isRunning = false;
+            isSlicing = false;
         }
         
         //Animacion movimiento
         animator.SetBool("Walk", isWalking);
+        animator.SetBool("Run", isRunning);
+        animator.SetBool("Slice", isSlicing);
         
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            
+        
+        if(CheckGround.isGround)
+        {
+            //reiniciar estado
+            canDoubleJump = true;
+            doubleJumpTimer = 0f;
+        }
+        else{
+            //Incrementar tiempo desde el primer salto
+            doubleJumpTimer += Time.deltaTime;
+        }
+
         // Control del salto
         if (Input.GetKeyDown(KeyCode.Space) ) 
         {
@@ -55,23 +88,15 @@ public class SantasMove : MonoBehaviour
             {
                 canDoubleJump = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
+                doubleJumpTimer = 0f; // Reinicia el temporizador del doble salto
             }
-            else
+            else if (canDoubleJump && doubleJumpTimer >= minTimeJump) // Doble salto
             {
-                if(Input.GetKeyDown(KeyCode.Space))
-                {
-                    if(canDoubleJump)
-                    {
-                        canDoubleJump = false;
-                        rb2D.velocity = new Vector2(rb2D.velocity.x, doubleJumpForce); // Aplicar salto doble   
-                        animator.SetBool("DoubleJump", true);
-                    }
-                }
-                else
-                {
-                    rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce);
-                }
-            }
+                // Doble salto sólo si ha pasado el tiempo mínimo desde el primer salto
+                canDoubleJump = false;
+                rb2D.velocity = new Vector2(rb2D.velocity.x, doubleJumpForce); // Aplicar doble salto   
+                animator.SetBool("DoubleJump", true);
+            }   
 
         }
 
@@ -80,6 +105,8 @@ public class SantasMove : MonoBehaviour
         {
             animator.SetBool("Jump", true);
             animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Slice", false);
         }
         else
         {

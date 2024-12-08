@@ -9211,12 +9211,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+  runspeed: 6
   jumpForce: 8
   doubleJumpForce: 6
   fallMultiplier: 0.5
   lowJumpMultiplier: 1
   spriteRenderer: {fileID: 1517488354}
   animator: {fileID: 1517488356}
+  minTimeJump: 0.2
 --- !u!114 &1517488360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11860,6 +11862,63 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1001 &1299698168628887221
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 776169328326494553, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_Name
+      value: pinchoshieloabajo
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 46.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1513299576504318449, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: be3146b8414932f448b54c38f9d9d71f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -11875,3 +11934,4 @@ SceneRoots:
   - {fileID: 2037867780}
   - {fileID: 1710219036}
   - {fileID: 367220170}
+  - {fileID: 1299698168628887221}
