@@ -31,10 +31,13 @@ public class SnowballLauncher : MonoBehaviour
         Rigidbody2D rb2D = snowball.GetComponent<Rigidbody2D>();
         if (rb2D != null)
         {
-            Debug.Log(spriteRenderer.name + " "+ spriteRenderer.flipX);
             // Lanza la bola en la dirección correcta (donde esta mirando)
             Vector2 launchDirection2 = spriteRenderer.flipX ? Vector2.left : Vector2.right;
-            rb2D.AddForce(launchDirection2 * throwForce, ForceMode2D.Impulse);
+            // Añade un pequeño ángulo hacia arriba
+            Vector2 adjustedLaunchDirection = (launchDirection2 + Vector2.up * 0.02f).normalized;
+
+            // Aplica la fuerza
+            rb2D.AddForce(adjustedLaunchDirection * throwForce, ForceMode2D.Impulse);
         }
     }
 

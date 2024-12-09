@@ -25,10 +25,17 @@ public class SantasMove : MonoBehaviour
     private float fallTimer;        // Temporizador para la caída
     private float doubleJumpTimer;
     public float minTimeJump = 0.2f;   // Tiempo mínimo antes de permitir el doble salto
+    private BoxCollider2D boxCollider;
+    public BoxCollider2D boxColliderGround;
+    private Vector2 originalOffset; // Offset original del collider
+    private Vector2 originalOffsetGround; // Offset del collider del CheckGround
 
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        originalOffset = boxCollider.offset;
+        originalOffsetGround = boxColliderGround.offset;
     }
 
     private void Update()
@@ -37,6 +44,7 @@ public class SantasMove : MonoBehaviour
         input.x = Input.GetAxisRaw("Horizontal"); //Solo movimiento en el eje x
 
         isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
         float currentSpeed = isRunning ? runspeed : speed;
         // Cambiar velocidad del Rigidbody2D
         rb2D.velocity = new Vector2(input.x * currentSpeed, rb2D.velocity.y);
@@ -44,16 +52,21 @@ public class SantasMove : MonoBehaviour
         if (input.x != 0)
         {
             spriteRenderer.flipX = input.x < 0;
+            AdjustCollider(input.x<0);
             isWalking = !isRunning;
+            
             if (Input.GetKeyDown(KeyCode.F) && (isWalking || isRunning))
             {
+                
                 isWalking = false;
                 isRunning = false;
                 isSlicing = true;
+                AjustColliderSlice(true);
             }
             else if (!Input.GetKey(KeyCode.F) || input.x == 0) // Detén el deslizamiento si se suelta F o no hay movimiento horizontal
             {
                 isSlicing = false;
+                AjustColliderSlice(false);
             }
             
         }    
@@ -63,11 +76,13 @@ public class SantasMove : MonoBehaviour
             isSlicing = false;
         }
         
+        
         //Animacion movimiento
         animator.SetBool("Walk", isWalking);
         animator.SetBool("Run", isRunning);
-        animator.SetBool("Slice", isSlicing);
         
+        animator.SetBool("Slice", isSlicing);
+            
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         
         if(CheckGround.isGround)
@@ -146,6 +161,37 @@ public class SantasMove : MonoBehaviour
         {
             // Salto más corto si no se mantiene presionada la tecla de salto
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
+        }
+    }
+    void AdjustCollider(bool isFlipped)
+    {
+        // Si el sprite está volteado (flipX es true), ajustamos el offset
+        if (isFlipped)
+        {
+            boxCollider.offset = new Vector2(-originalOffset.x, originalOffset.y);
+            boxColliderGround.offset = new Vector2(-originalOffsetGround.x, originalOffsetGround.y);
+        }
+        else
+        {
+            boxCollider.offset = originalOffset;
+            boxColliderGround.offset = originalOffsetGround;
+        }
+    }
+    void AjustColliderSlice(bool isSlice)
+    {
+        if(isSlice)
+        {
+            boxCollider.offset = new Vector2(boxCollider.offset.y, boxCollider.offset.x);
+            boxCollider.size = new Vector2(boxCollider.size.y, boxCollider.size.x);
+
+            boxColliderGround.offset = new Vector2(boxColliderGround.offset.y, boxColliderGround.offset.x);
+            boxColliderGround.size = new Vector2(boxColliderGround.size.y,boxColliderGround.size.x);
+        }
+        else{
+            boxCollider.offset = originalOffset;
+            boxCollider.size = new Vector2(0.4310303f, 1.204287f);
+            boxColliderGround.offset = originalOffsetGround;
+            boxColliderGround.size = new Vector2(0.4441061f, 0.01158571f);
         }
     }
 
