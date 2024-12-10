@@ -17,7 +17,7 @@ public class SantasMove : MonoBehaviour
     private Rigidbody2D rb2D;   // Referencia al Rigidbody2D para controlar física
     private bool isWalking;
     private bool isRunning;
-    private bool isSlicing;
+    private bool isSlicing = false;
 
     public SpriteRenderer spriteRenderer;
     public Animator animator;
@@ -29,11 +29,14 @@ public class SantasMove : MonoBehaviour
     public BoxCollider2D boxColliderGround;
     private Vector2 originalOffset; // Offset original del collider
     private Vector2 originalOffsetGround; // Offset del collider del CheckGround
+    private Vector2 originalSize; // Tamaño original del collider
+    private bool isAir = false;
 
     private void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        originalSize = boxCollider.size;
         originalOffset = boxCollider.offset;
         originalOffsetGround = boxColliderGround.offset;
     }
@@ -52,28 +55,42 @@ public class SantasMove : MonoBehaviour
         if (input.x != 0)
         {
             spriteRenderer.flipX = input.x < 0;
-            AdjustCollider(input.x<0);
+            if (!isSlicing)
+            {
+                Debug.Log("spriteRenderer.flipX");
+                AdjustCollider(input.x<0);
+            }
+            
             isWalking = !isRunning;
             
-            if (Input.GetKeyDown(KeyCode.F) && (isWalking || isRunning))
+            if(!isAir)
             {
-                
-                isWalking = false;
-                isRunning = false;
-                isSlicing = true;
-                AjustColliderSlice(true);
+                if (Input.GetKeyDown(KeyCode.F) && (isWalking || isRunning))
+                {
+                    StartCoroutine(AjustColliderSlice(true));
+                }
+                if (Input.GetKeyUp(KeyCode.F) || input.x == 0) // Detén el deslizamiento si se suelta F o no hay movimiento horizontal
+                {
+                    if(isSlicing)
+                    {
+                        Debug.Log("SlicingStop");
+                        StartCoroutine(AjustColliderSlice(false));
+                    }
+                    
+                }
             }
-            else if (!Input.GetKey(KeyCode.F) || input.x == 0) // Detén el deslizamiento si se suelta F o no hay movimiento horizontal
-            {
-                isSlicing = false;
-                AjustColliderSlice(false);
-            }
+
             
         }    
-        else{
+        else
+        {
             isWalking = false;
             isRunning = false;
-            isSlicing = false;
+            if(isSlicing)
+            {
+                Debug.Log("SlicingStop");
+                StartCoroutine(AjustColliderSlice(false));
+            }
         }
         
         
@@ -81,9 +98,8 @@ public class SantasMove : MonoBehaviour
         animator.SetBool("Walk", isWalking);
         animator.SetBool("Run", isRunning);
         
-        animator.SetBool("Slice", isSlicing);
-            
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        
+
         
         if(CheckGround.isGround)
         {
@@ -101,6 +117,7 @@ public class SantasMove : MonoBehaviour
         {
             if (CheckGround.isGround) //si pulsamos espacio y estamos en suelo, se salta
             {
+                AdjustCollider(input.x<0);
                 canDoubleJump = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
                 doubleJumpTimer = 0f; // Reinicia el temporizador del doble salto
@@ -118,10 +135,18 @@ public class SantasMove : MonoBehaviour
         // Mientras esté en el aire (descendiendo o ascendiendo)
         if (!CheckGround.isGround) 
         {
+            StartCoroutine(AjustColliderSlice(false));
+            
             animator.SetBool("Jump", true);
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
-            animator.SetBool("Slice", false);
+            isRunning = false;
+            isWalking = false;
+            isSlicing = false;
+            isAir = true;
+ 
+                 
+           // animator.SetBool("Slice", false);
         }
         else
         {
@@ -129,6 +154,7 @@ public class SantasMove : MonoBehaviour
             animator.SetBool("Jump", false);
             animator.SetBool("DoubleJump", false);
             animator.SetBool("Falling", false);
+            isAir = false;
         }
 
 
@@ -170,6 +196,7 @@ public class SantasMove : MonoBehaviour
         {
             boxCollider.offset = new Vector2(-originalOffset.x, originalOffset.y);
             boxColliderGround.offset = new Vector2(-originalOffsetGround.x, originalOffsetGround.y);
+            
         }
         else
         {
@@ -177,22 +204,56 @@ public class SantasMove : MonoBehaviour
             boxColliderGround.offset = originalOffsetGround;
         }
     }
-    void AjustColliderSlice(bool isSlice)
+    IEnumerator AjustColliderSlice(bool isSlice)
     {
-        if(isSlice)
+        if (isSlice)
         {
-            boxCollider.offset = new Vector2(boxCollider.offset.y, boxCollider.offset.x);
-            boxCollider.size = new Vector2(boxCollider.size.y, boxCollider.size.x);
+            isSlicing = true;
+            animator.SetBool("Slice", isSlicing);
 
-            boxColliderGround.offset = new Vector2(boxColliderGround.offset.y, boxColliderGround.offset.x);
-            boxColliderGround.size = new Vector2(boxColliderGround.size.y,boxColliderGround.size.x);
+            // Iniciar la corrutina para esperar el inicio de la animación
+            StartCoroutine(WaitForAnimationToStart("Slide"));
+            
+            isWalking = false;
+            isRunning = false;
+                        
         }
-        else{
+        else
+        {
+            isSlicing = false;
+            animator.SetBool("Slice", isSlicing);
             boxCollider.offset = originalOffset;
-            boxCollider.size = new Vector2(0.4310303f, 1.204287f);
-            boxColliderGround.offset = originalOffsetGround;
-            boxColliderGround.size = new Vector2(0.4441061f, 0.01158571f);
+            boxCollider.size = originalSize;
+            
         }
+        yield return new WaitForSeconds(0.1f); 
+        
     }
+    private IEnumerator WaitForAnimationToStart(string animationName)
+    {
+        // Esperar hasta que el Animator cambie al estado deseado
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(animationName))
+        {
+            yield return null; // Espera un frame
+        }
+
+        Debug.Log("La animación 'Slide' ha comenzado");
+
+        // Esperar hasta un punto específico de la animación (opcional)
+        while (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.1f) // Ajusta según el momento que necesites
+        {
+            yield return null; // Espera un frame
+        }
+
+        Debug.Log("Tiempo suficiente en 'Slide'. Ajustando colisionador...");
+
+        // Ajustar el colisionador aquí
+        Vector2 newOffset = new Vector2(boxCollider.offset.x, boxCollider.offset.y / 0.08f);
+        Vector2 newSize = new Vector2(boxCollider.size.x, boxCollider.size.y / 3.5f);
+
+        boxCollider.offset = newOffset;
+        boxCollider.size = newSize;
+    }
+
 
 }
