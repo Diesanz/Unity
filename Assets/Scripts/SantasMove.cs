@@ -24,6 +24,7 @@ public class SantasMove : MonoBehaviour
     private float fallDelay = 0.5f; // Tiempo en segundos antes de activar "Falling"
     private float fallTimer;        // Temporizador para la caída
     private float doubleJumpTimer;
+    private bool isJumping = false;
     public float minTimeJump = 0.2f;   // Tiempo mínimo antes de permitir el doble salto
     private BoxCollider2D boxCollider;
     public BoxCollider2D boxColliderGround;
@@ -56,6 +57,7 @@ public class SantasMove : MonoBehaviour
         // Invierte sprite renderer
         if (input.x != 0)
         {
+           
             spriteRenderer.flipX = input.x < 0;
 
             isWalking = !isRunning;
@@ -95,6 +97,12 @@ public class SantasMove : MonoBehaviour
                 Debug.Log("SlicingStop");
                 StartCoroutine(AjustColliderSlice(false));
             }
+
+           /* if(isAir)
+            {
+                 Debug.LogWarning("Aire2"+ isAir + ", Flix" + (spriteRenderer.flipX));
+                 AdjustCollider(spriteRenderer.flipX);
+            }*/
         }
         
         
@@ -169,6 +177,7 @@ public class SantasMove : MonoBehaviour
             {
                 canDoubleJump = false;
                 animator.SetBool("Falling", true);
+                AdjustCollider(spriteRenderer.flipX);
                 
             }
         }
@@ -178,19 +187,25 @@ public class SantasMove : MonoBehaviour
             // Resetea el temporizador si aún está subiendo
             fallTimer = 0;
             animator.SetBool("Falling", false);
+            if(!isSlicing)
+            {
+                AdjustCollider(spriteRenderer.flipX);
+            }
+            
         }
+       
 
         // Manejo de la caída y salto prolongado
         if (rb2D.velocity.y < 0)
         {
             Debug.Log("Falling");
-
+            
             // Caída rápida
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
         else if (rb2D.velocity.y > 0 && Input.GetKey(KeyCode.Space))
         {
-
+            
             // Salto más corto si no se mantiene presionada la tecla de salto
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
