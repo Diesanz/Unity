@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SnowballLauncher : MonoBehaviour
 {
@@ -7,19 +8,37 @@ public class SnowballLauncher : MonoBehaviour
     public Transform firePoint;          // Punto desde donde se lanza la bola de nieve
     public float throwForce = 15f;       // Fuerza de lanzamiento
 
+    public Text totalBalls;
+    public Text numberBalls;
+
     private SpriteRenderer spriteRenderer;
+    private int numberTotalBalls;
 
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener el SpriteRenderer del personaje
+        numberTotalBalls = 30;
+        numberBalls.text = numberTotalBalls.ToString();
+        totalBalls.text = numberTotalBalls.ToString();
     }
     void Update()
     {
         // Verifica si se ha presionado la tecla F
         if (Input.GetKeyDown(KeyCode.E))
         {
-            LaunchSnowball();
+            if(numberTotalBalls > 0)
+            {   
+                LaunchSnowball();
+                numberTotalBalls -=1;
+                numberBalls.text = numberTotalBalls.ToString();
+            }
+            else
+            {
+                numberBalls.color = Color.red;
+            }
+            
         }
+       
     }
 
     void LaunchSnowball()

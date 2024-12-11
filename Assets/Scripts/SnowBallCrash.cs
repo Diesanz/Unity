@@ -10,7 +10,6 @@ public class SnowBallCrash : MonoBehaviour
     {
         // Obtiene el componente Animator
         animator = GetComponent<Animator>();
-        Debug.Log("a");
     }
 
     void OnCollisionEnter2D(Collision2D collision)
