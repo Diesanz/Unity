@@ -15,7 +15,7 @@ public class SantasMove : MonoBehaviour
 
     private Vector2 input;
     private Rigidbody2D rb2D;   // Referencia al Rigidbody2D para controlar física
-    private bool isWalking;
+    private bool isWalking = false;
     private bool isRunning;
     private bool isSlicing = false;
 
@@ -52,12 +52,19 @@ public class SantasMove : MonoBehaviour
         float currentSpeed = isRunning ? runspeed : speed;
         // Cambiar velocidad del Rigidbody2D
         rb2D.velocity = new Vector2(input.x * currentSpeed, rb2D.velocity.y);
+
         // Invierte sprite renderer
         if (input.x != 0)
         {
             spriteRenderer.flipX = input.x < 0;
 
             isWalking = !isRunning;
+
+            if(!isSlicing)
+            {
+                AdjustCollider(input.x<0);
+            }
+            
             
             if(!isAir)
             {
@@ -176,17 +183,14 @@ public class SantasMove : MonoBehaviour
         // Manejo de la caída y salto prolongado
         if (rb2D.velocity.y < 0)
         {
-            if(!isSlicing){
-                AdjustCollider(input.x<0);
-            } 
+            Debug.Log("Falling");
+
             // Caída rápida
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
-        else if (rb2D.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
+        else if (rb2D.velocity.y > 0 && Input.GetKey(KeyCode.Space))
         {
-            if(!isSlicing){
-                AdjustCollider(input.x<0);
-            }
+
             // Salto más corto si no se mantiene presionada la tecla de salto
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
