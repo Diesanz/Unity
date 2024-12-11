@@ -43,6 +43,7 @@ public class SantasMove : MonoBehaviour
 
     private void Update()
     {
+        
         // Obtén la entrada del jugador
         input.x = Input.GetAxisRaw("Horizontal"); //Solo movimiento en el eje x
 
@@ -55,16 +56,12 @@ public class SantasMove : MonoBehaviour
         if (input.x != 0)
         {
             spriteRenderer.flipX = input.x < 0;
-            if (!isSlicing)
-            {
-                Debug.Log("spriteRenderer.flipX");
-                AdjustCollider(input.x<0);
-            }
-            
+
             isWalking = !isRunning;
             
             if(!isAir)
             {
+                
                 if (Input.GetKeyDown(KeyCode.F) && (isWalking || isRunning))
                 {
                     StartCoroutine(AjustColliderSlice(true));
@@ -117,7 +114,7 @@ public class SantasMove : MonoBehaviour
         {
             if (CheckGround.isGround) //si pulsamos espacio y estamos en suelo, se salta
             {
-                AdjustCollider(input.x<0);
+                //AdjustCollider(input.x<0);
                 canDoubleJump = true;
                 rb2D.velocity = new Vector2(rb2D.velocity.x, jumpForce); // Aplicar salto
                 doubleJumpTimer = 0f; // Reinicia el temporizador del doble salto
@@ -144,9 +141,7 @@ public class SantasMove : MonoBehaviour
             isWalking = false;
             isSlicing = false;
             isAir = true;
- 
-                 
-           // animator.SetBool("Slice", false);
+                
         }
         else
         {
@@ -172,6 +167,7 @@ public class SantasMove : MonoBehaviour
         }
         else if (rb2D.velocity.y > 0)
         {
+            
             // Resetea el temporizador si aún está subiendo
             fallTimer = 0;
             animator.SetBool("Falling", false);
@@ -180,11 +176,17 @@ public class SantasMove : MonoBehaviour
         // Manejo de la caída y salto prolongado
         if (rb2D.velocity.y < 0)
         {
+            if(!isSlicing){
+                AdjustCollider(input.x<0);
+            } 
             // Caída rápida
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
         }
         else if (rb2D.velocity.y > 0 && !Input.GetKey(KeyCode.Space))
         {
+            if(!isSlicing){
+                AdjustCollider(input.x<0);
+            }
             // Salto más corto si no se mantiene presionada la tecla de salto
             rb2D.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.deltaTime;
         }
@@ -194,6 +196,7 @@ public class SantasMove : MonoBehaviour
         // Si el sprite está volteado (flipX es true), ajustamos el offset
         if (isFlipped)
         {
+            Debug.Log("Position change");
             boxCollider.offset = new Vector2(-originalOffset.x, originalOffset.y);
             boxColliderGround.offset = new Vector2(-originalOffsetGround.x, originalOffsetGround.y);
             
