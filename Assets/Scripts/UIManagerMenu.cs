@@ -21,7 +21,7 @@ public class UIManagerMenu : MonoBehaviour
 
     public void ShowLevels()
     {
-        SceneManager.LoadScene("Levels");
+        SceneManager.LoadScene("SelectLevel");
     }
 
     public void AnotherOptions()

@@ -8,8 +8,6 @@ public class OpenLevel : MonoBehaviour
     public string levelName;
     private bool inDoor = false;
 
-    // Configurar la tecla de interacción desde el Inspector
-    public KeyCode interactKey = KeyCode.E;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -40,9 +38,11 @@ public class OpenLevel : MonoBehaviour
     private void Update()
     {
         // Si el jugador está dentro y presiona la tecla, cargar la escena
-        if (inDoor && Input.GetKeyDown(interactKey)) // Usar GetKeyDown para que la acción sea por una sola vez
+        if (inDoor && Input.GetKeyDown(KeyCode.E)) // Usar GetKeyDown para que la acción sea por una sola vez
         {
             SceneManager.LoadScene(levelName);
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
         }
     }
 }
