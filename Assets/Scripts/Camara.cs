@@ -9,17 +9,21 @@ public class CameraFollow : MonoBehaviour
     private Camera cam;
 
     // Limites de la cámara
-    private float minX, maxX, minY, maxY;
+    public float minX, maxX, minY, maxY;
 
     void Start()
     {
         cam = Camera.main;
 
-        // Establece los límites de la cámara en base a los valores proporcionados
-        minX = 17.44f;   // Límite izquierdo (posición mínima X)
-        maxX = 148.65f;  // Límite derecho (posición máxima X)
-        minY = 2.604295f; // Límite inferior (posición mínima Y)
-        maxY = 6.71f;     // Límite superior (posición máxima Y)
+        // Verifica si los valores no han sido asignados en el Inspector (suponiendo que los valores iniciales son 0)
+        if (minX == 0f && maxX == 0f && minY == 0f && maxY == 0f)
+        {
+            // Si no se asignaron en el Inspector, se asignan los valores predeterminados
+            minX = 17.44f;   // Límite izquierdo (posición mínima X)
+            maxX = 148.65f;  // Límite derecho (posición máxima X)
+            minY = 2.604295f; // Límite inferior (posición mínima Y)
+            maxY = 6.71f;     // Límite superior (posición máxima Y)
+        }
     }
 
     void LateUpdate()
