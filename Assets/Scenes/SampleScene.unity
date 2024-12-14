@@ -1078,7 +1078,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.2098119, y: 0.33915854}
+  m_Offset: {x: -0.2779356, y: 0.33915854}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1089,7 +1089,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.61354953, y: 0.9966533}
+  m_Size: {x: 0.47730216, y: 0.9966533}
   m_EdgeRadius: 0
 --- !u!4 &1036432856
 Transform:
@@ -1448,7 +1448,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.19272766, y: 0}
+  m_Offset: {x: -0.2608507, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1459,7 +1459,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.6145447, y: 1}
+  m_Size: {x: 0.4782986, y: 1}
   m_EdgeRadius: 0
 --- !u!4 &1537281162
 Transform:
@@ -1605,10 +1605,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rutina: 0
   cronometro: 0
-  ani: {fileID: 0}
+  ani: {fileID: 1652765480}
   direccion: 0
   speed_walk: 3
-  target: {fileID: 0}
+  target: {fileID: 2109900504}
   atacando: 0
   rango_vision: 4
   rango_ataque: 0.5
@@ -2012,6 +2012,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd8e2a9bd6838624aa97ba86f0a1de05, type: 3}
+--- !u!1 &2109900504 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4871423395711504615, guid: d261bcf366fba4f40aad64e37d6e643c, type: 3}
+  m_PrefabInstance: {fileID: 7110382431724578799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &71932526238776205
 PrefabInstance:
   m_ObjectHideFlags: 0

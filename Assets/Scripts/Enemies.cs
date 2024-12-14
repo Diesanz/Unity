@@ -84,6 +84,7 @@ public class Enemies : MonoBehaviour
                     transform.rotation = Quaternion.Euler(0, 180, 0);
                     ani.SetBool("attack", false);
                 }
+                ani.SetBool("walk", true);
             }
             else
             {
