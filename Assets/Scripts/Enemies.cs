@@ -17,6 +17,9 @@ public class Enemies : MonoBehaviour
     public float rango_ataque;
     public GameObject rango, hit;
 
+    public float limiteIzquierdo;
+    public float limiteDerecho;
+
     void Start()
     {
         ani = GetComponent<Animator>();
@@ -51,21 +54,32 @@ public class Enemies : MonoBehaviour
                     break;
                 case 2:
                     Vector3 moveDir = Vector3.zero;
+                    Vector3 nuevaPosicion = transform.position;
 
                     switch (direccion)
                     {
-                        case 0:
+                        case 0: // Mover hacia la derecha
                             transform.rotation = Quaternion.Euler(0, 0, 0);
                             moveDir = transform.right * speed_walk * Time.deltaTime;
+                            nuevaPosicion = transform.position + moveDir;
                             break;
-                        case 1:
+                        case 1: // Mover hacia la izquierda
                             transform.rotation = Quaternion.Euler(0, 180, 0);
                             moveDir = transform.right * speed_walk * Time.deltaTime;
+                            nuevaPosicion = transform.position + moveDir;
                             break;
                     }
-
-                    rb.MovePosition(transform.position + moveDir);
-                    ani.SetBool("walk", true);
+                    // Verificar los límites antes de mover
+                    if (nuevaPosicion.x >= limiteIzquierdo && nuevaPosicion.x <= limiteDerecho)
+                    {
+                        rb.MovePosition(nuevaPosicion);
+                        ani.SetBool("walk", true);
+                    }
+                    else
+                    {
+                        // Si llega al límite, detener movimiento
+                        ani.SetBool("walk", false);
+                    }
                     break;
             }
         }
@@ -73,18 +87,25 @@ public class Enemies : MonoBehaviour
         {
             if(Mathf.Abs(transform.position.x - target.transform.position.x) > rango_ataque && !atacando)
             {
-                if(transform.position.x < target.transform.position.x)
+                if(transform.position.x  >= limiteIzquierdo && transform.position.x <= limiteDerecho)
                 {
-                    rb.MovePosition((transform.right * (speed_walk*2) * Time.deltaTime) + transform.position);
-                    transform.rotation = Quaternion.Euler(0, 0, 0);
-                    ani.SetBool("attack", false);
+                    if(transform.position.x < target.transform.position.x)
+                    {
+                        rb.MovePosition((transform.right * (speed_walk*2) * Time.deltaTime) + transform.position);
+                        transform.rotation = Quaternion.Euler(0, 0, 0);
+                        ani.SetBool("attack", false);
+                    }
+                    else{
+                        rb.MovePosition((transform.right * (speed_walk*2) * Time.deltaTime) + transform.position);
+                        transform.rotation = Quaternion.Euler(0, 180, 0);
+                        ani.SetBool("attack", false);
+                    }
+                    ani.SetBool("walk", true);
                 }
                 else{
-                    rb.MovePosition((transform.right * (speed_walk*2) * Time.deltaTime) + transform.position);
-                    transform.rotation = Quaternion.Euler(0, 180, 0);
-                    ani.SetBool("attack", false);
+                    ani.SetBool("walk", false);
                 }
-                ani.SetBool("walk", true);
+
             }
             else
             {
