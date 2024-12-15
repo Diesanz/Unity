@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Video;
 
 public class Enemies : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class Enemies : MonoBehaviour
 
     public float limiteIzquierdo;
     public float limiteDerecho;
+    public int vida = 1;
+     private bool estaMuerto = false; // Bandera para evitar que el enemigo muera varias veces.
+    private float tiempoEntreGolpes = 0.5f; // Tiempo de cooldown entre golpes
+    private float ultimoGolpe = 0f; // Registro del último golpe
 
     void Start()
     {
@@ -33,6 +38,11 @@ public class Enemies : MonoBehaviour
 
     public void Comportamiento()
     {
+        if (ani.GetBool("death"))
+        {
+            return; // Salir del método si está muerto
+        }
+
         if(Mathf.Abs(transform.position.x - target.transform.position.x) > rango_vision && !atacando)
         {
             cronometro += Time.deltaTime;
@@ -140,5 +150,56 @@ public class Enemies : MonoBehaviour
     public void ColliderWeaponFalse()
     {
         hit.GetComponent<BoxCollider2D>().enabled = false;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Bola") && !estaMuerto) // Verifica si ya está muerto
+        {
+            // Control de cooldown para que no reciba daño repetidamente en un corto tiempo
+            if (Time.time - ultimoGolpe < tiempoEntreGolpes) return;
+            ultimoGolpe = Time.time;
+
+            if (!ani.GetCurrentAnimatorStateInfo(0).IsName("hurt"))
+            {
+                vida--; // Resta 1 a la vida
+                Debug.LogWarning(vida);
+
+                if (vida > 0)
+                {
+                    ani.SetTrigger("hurt"); // Ejecuta la animación de daño
+                }
+                else
+                {
+                    // Si la vida es 0 o menos, activa la animación de muerte
+                    ani.SetBool("death", true);
+                    estaMuerto = true; // Marca al enemigo como muerto
+                    StartCoroutine(DestruirEnemigo()); // Espera a que termine la animación y destruye el enemigo
+                }
+
+                // Dependiendo del estado de la animación actual, ajustamos las animaciones de movimiento o ataque
+                if (ani.GetBool("walk"))
+                {
+                    ani.SetBool("walk", true); // Vuelve a Walk
+                }
+                else if (ani.GetBool("attack"))
+                {
+                    ani.SetBool("attack", true);
+                }
+                else
+                {
+                    ani.SetBool("walk", false); // Vuelve a Idle
+                    ani.SetBool("attack", false);
+                }
+            }
+        }
+    }
+
+    // Coroutine para destruir al enemigo después de la animación de muerte
+    IEnumerator DestruirEnemigo()
+    {
+        // Espera la duración de la animación actual (Muerte)
+        yield return new WaitForSeconds(ani.GetCurrentAnimatorStateInfo(0).length);
+        Destroy(gameObject); // Destruye el enemigo
     }
 }
