@@ -87,7 +87,7 @@ public class Enemies : MonoBehaviour
         {
             if(Mathf.Abs(transform.position.x - target.transform.position.x) > rango_ataque && !atacando)
             {
-                if(transform.position.x  >= limiteIzquierdo && transform.position.x <= limiteDerecho)
+                if(target.transform.position.x  >= limiteIzquierdo && target.transform.position.x <= limiteDerecho)
                 {
                     if(transform.position.x < target.transform.position.x)
                     {
