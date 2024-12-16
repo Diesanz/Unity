@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -20,16 +20,21 @@ public class Enemies : MonoBehaviour
 
     public float limiteIzquierdo;
     public float limiteDerecho;
-    public int vida = 1;
+    [SerializeField] private float vidaMAX;
+    private float vida;
      private bool estaMuerto = false; // Bandera para evitar que el enemigo muera varias veces.
     private float tiempoEntreGolpes = 0.5f; // Tiempo de cooldown entre golpes
     private float ultimoGolpe = 0f; // Registro del último golpe
+
+    [SerializeField] private HealthBar bar;
 
     void Start()
     {
         ani = GetComponent<Animator>();
         target = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
+        vida = vidaMAX;
+        //bar.UpdateHealthBar(vidaMAX, vida);
     }
     void Update()
     {
@@ -162,9 +167,8 @@ public class Enemies : MonoBehaviour
 
             if (!ani.GetCurrentAnimatorStateInfo(0).IsName("hurt"))
             {
-                vida--; // Resta 1 a la vida
-                Debug.LogWarning(vida);
-
+                vida--; // Resta 1 a la vida           
+                bar.UpdateHealthBar(vidaMAX, vida);
                 if (vida > 0)
                 {
                     ani.SetTrigger("hurt"); // Ejecuta la animación de daño
