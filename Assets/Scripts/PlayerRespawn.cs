@@ -5,16 +5,38 @@ using UnityEngine.SceneManagement;
 
 public class PlayerRespawn : MonoBehaviour
 {
+    public GameObject[] corazones;
+    private int life;
     //Cuando el player pase se guarda toda la info como número de rayos, caramelos cogidos hasta ese momento
     private float checkpointPosX, checkpointPosY; //no se usa vector3 para guardar info en tiempo real, ya que palyer prefs no guarda vectores
     public Animator animator;
     public float respawnDelay = 0.5f; // Tiempo de espera antes de reiniciar la escena
     void Start()
     {
+        life = corazones.Length;
         //Posicion x e y para respawn
         if(PlayerPrefs.GetFloat("checkpointPosX") != 0)
         {
             transform.position=new Vector2(PlayerPrefs.GetFloat("checkpointPosX"), PlayerPrefs.GetFloat("checkpointPosY"));
+        }
+    }
+
+    public void Update()
+    {
+        if(life < 1)
+        {
+            Destroy(corazones[0].gameObject);
+            StartCoroutine(HandlePlayerDeath());
+        }
+        else if(life < 2)
+        {
+            Destroy(corazones[1].gameObject);
+            animator.Play("Dead");
+        }   
+        else if(life < 3)
+        {
+            Destroy(corazones[2].gameObject);
+            animator.Play("Dead");
         }
     }
 
@@ -30,7 +52,7 @@ public class PlayerRespawn : MonoBehaviour
 
     public void PlayerDamaged()
     {
-        StartCoroutine(HandlePlayerDeath());
+        life --;
     }
 
     private IEnumerator HandlePlayerDeath()
