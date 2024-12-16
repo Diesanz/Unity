@@ -21060,6 +21060,18 @@ PrefabInstance:
       propertyPath: corazones.Array.data[2]
       value: 
       objectReference: {fileID: 17972917}
+    - target: {fileID: 7546611887180736543, guid: d261bcf366fba4f40aad64e37d6e643c, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7546611887180736543, guid: d261bcf366fba4f40aad64e37d6e643c, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7546611887180736543, guid: d261bcf366fba4f40aad64e37d6e643c, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8012803084665998274, guid: d261bcf366fba4f40aad64e37d6e643c, type: 3}
       propertyPath: totalBalls
       value: 

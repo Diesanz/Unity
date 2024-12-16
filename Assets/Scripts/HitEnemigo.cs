@@ -9,7 +9,7 @@ public class HitEnemigo: MonoBehaviour
     {
         if(coll.CompareTag("Player"))
         {
-            Debug.Log("Daño");
+            coll.transform.GetComponent<PlayerRespawn>().PlayerDamaged();
         }
 
     }

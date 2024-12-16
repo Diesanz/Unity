@@ -7,67 +7,73 @@ public class PlayerRespawn : MonoBehaviour
 {
     public GameObject[] corazones;
     private int life;
-    //Cuando el player pase se guarda toda la info como número de rayos, caramelos cogidos hasta ese momento
-    private float checkpointPosX, checkpointPosY; //no se usa vector3 para guardar info en tiempo real, ya que palyer prefs no guarda vectores
+    public float invulnerabilityDuration = 0.75f; // Tiempo de invulnerabilidad tras recibir daño
+    private bool isInvulnerable = false; // Controla si el jugador puede recibir daño
+    private float checkpointPosX, checkpointPosY;
     public Animator animator;
     public float respawnDelay = 0.5f; // Tiempo de espera antes de reiniciar la escena
+
     void Start()
     {
         life = corazones.Length;
-        //Posicion x e y para respawn
-        if(PlayerPrefs.GetFloat("checkpointPosX") != 0)
+        if (PlayerPrefs.GetFloat("checkpointPosX") != 0)
         {
-            transform.position=new Vector2(PlayerPrefs.GetFloat("checkpointPosX"), PlayerPrefs.GetFloat("checkpointPosY"));
+            transform.position = new Vector2(PlayerPrefs.GetFloat("checkpointPosX"), PlayerPrefs.GetFloat("checkpointPosY"));
         }
     }
 
-    public void Update()
+    public void CheckLive()
     {
-        if(life < 1)
+        if (life < 1)
         {
             Destroy(corazones[0].gameObject);
             StartCoroutine(HandlePlayerDeath());
         }
-        else if(life < 2)
+        else if (life < 2)
         {
             Destroy(corazones[1].gameObject);
-            animator.Play("Dead");
-        }   
-        else if(life < 3)
+            animator.Play("Hit");
+        }
+        else if (life < 3)
         {
             Destroy(corazones[2].gameObject);
-            animator.Play("Dead");
+            animator.Play("Hit");
         }
     }
 
-    /*se llama cuando se pase por el checkpoint
-    *@param x valor de coordenada x de donde esta el checkpoint por donde se ha pasado
-    *@param y valor de coordenada y de donde esta el checkpoint por donde se ha pasado
-    */
     public void ReachedCheckpoint(float x, float y)
     {
-        PlayerPrefs.SetFloat("checkpointPosX",x); //Guarda coordenada x de donde esta el checkpoint
-        PlayerPrefs.SetFloat("checkpointPosY",y);
+        PlayerPrefs.SetFloat("checkpointPosX", x);
+        PlayerPrefs.SetFloat("checkpointPosY", y);
     }
 
     public void PlayerDamaged()
     {
-        life --;
+        if (!isInvulnerable) // Solo recibe daño si no es invulnerable
+        {
+            life--;
+            CheckLive();
+            StartCoroutine(InvulnerabilityTimer());
+        }
+    }
+
+    private IEnumerator InvulnerabilityTimer()
+    {
+        isInvulnerable = true; // Activa la invulnerabilidad
+
+
+        yield return new WaitForSeconds(invulnerabilityDuration);
+
+        isInvulnerable = false; // Desactiva la invulnerabilidad
+
     }
 
     private IEnumerator HandlePlayerDeath()
     {
-        // Activar la animación de muerte
         animator.Play("Dead");
-
-        // Obtener la duración de la animación "Dead"
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         float animationDuration = stateInfo.length;
-
-        // Esperar la duración de la animación
         yield return new WaitForSeconds(animationDuration);
-
-        // Reiniciar la escena
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
