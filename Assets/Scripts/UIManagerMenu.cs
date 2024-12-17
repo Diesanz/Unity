@@ -9,6 +9,7 @@ public class UIManagerMenu : MonoBehaviour
 
     public void PlayGame()
     {
+        Time.timeScale = 1;
         SceneManager.LoadScene("SampleScene");
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
@@ -21,7 +22,11 @@ public class UIManagerMenu : MonoBehaviour
 
     public void ShowLevels()
     {
+        
         SceneManager.LoadScene("SelectLevel");
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Time.timeScale = 1;
     }
 
     public void AnotherOptions()

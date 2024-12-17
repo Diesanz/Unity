@@ -204,6 +204,12 @@ public class Enemies : MonoBehaviour
     {
         // Espera la duración de la animación actual (Muerte)
         yield return new WaitForSeconds(ani.GetCurrentAnimatorStateInfo(0).length);
+        
+        Victoria victoriaScript = gameObject.GetComponent<Victoria>();
+        if (victoriaScript != null)
+        {
+            victoriaScript.VictoriaEnemy(); // Llama al método si el script está presente
+        }
         Destroy(gameObject); // Destruye el enemigo
     }
 }

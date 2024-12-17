@@ -35,5 +35,13 @@ public class UIManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void ShowLevels()
+    {
+        
+        SceneManager.LoadScene("SelectLevel");
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Time.timeScale = 1;
+    }
 
 }

@@ -18,10 +18,10 @@ public class Victoria : MonoBehaviour
         health = gameObject.GetComponent<Enemies>().vida;
     }
 
-    void Update(){
+    public void VictoriaEnemy(){
         health = gameObject.GetComponent<Enemies>().vida;
         if(health <= 0){
-            Debug.LogWarning("En");
+            Time.timeScale = 0;
             victoryPanel.SetActive(true);
         }
     }
