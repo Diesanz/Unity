@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Audio;
 public class UIManagerMenu : MonoBehaviour
 {
     public GameObject menuPanel;
-
+    public AudioSource clip;
     public void PlayGame()
     {
         Time.timeScale = 1;
@@ -33,6 +33,12 @@ public class UIManagerMenu : MonoBehaviour
     {
 
     }
+
+    public void PlaySound()
+    {
+        clip.Play();
+    }
+
 
 
 }

@@ -22,9 +22,11 @@ public class Enemies : MonoBehaviour
     public float limiteDerecho;
     [SerializeField] private float vidaMAX;
     public float vida;
-     private bool estaMuerto = false; // Bandera para evitar que el enemigo muera varias veces.
+    private bool estaMuerto = false; // Bandera para evitar que el enemigo muera varias veces.
     private float tiempoEntreGolpes = 1f; // Tiempo de cooldown entre golpes
     private float ultimoGolpe = 0f; // Registro del último golpe
+
+    public AudioSource clip;
 
     [SerializeField] private HealthBar bar;
 
@@ -203,6 +205,7 @@ public class Enemies : MonoBehaviour
     IEnumerator DestruirEnemigo()
     {
         // Espera la duración de la animación actual (Muerte)
+        clip.Play();
         yield return new WaitForSeconds(ani.GetCurrentAnimatorStateInfo(0).length);
         
         Victoria victoriaScript = gameObject.GetComponent<Victoria>();
@@ -210,6 +213,7 @@ public class Enemies : MonoBehaviour
         {
             victoriaScript.VictoriaEnemy(); // Llama al método si el script está presente
         }
+
         Destroy(gameObject); // Destruye el enemigo
     }
 }

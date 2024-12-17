@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.Audio;
 public class PlayerRespawn : MonoBehaviour
 {
     public GameObject[] corazones;
@@ -13,6 +13,8 @@ public class PlayerRespawn : MonoBehaviour
     public Animator animator;
     public float respawnDelay = 0.5f; // Tiempo de espera antes de reiniciar la escena
 
+    public AudioSource clip;
+    public AudioSource clipHurt;
 
     void Start()
     {
@@ -33,12 +35,14 @@ public class PlayerRespawn : MonoBehaviour
         }
         else if (life < 2)
         {
-           corazones[1].gameObject.SetActive(false);
+            corazones[1].gameObject.SetActive(false);
+            clipHurt.Play();
             animator.Play("Hit");
         }
         else if (life < 3)
         {
             corazones[2].gameObject.SetActive(false);
+            clipHurt.Play();
             animator.Play("Hit");
         }
     }
@@ -63,7 +67,7 @@ public class PlayerRespawn : MonoBehaviour
     {
         isInvulnerable = true; // Activa la invulnerabilidad
 
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length+0.1f );
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length+1 );
 
         isInvulnerable = false; // Desactiva la invulnerabilidad
     }
@@ -71,6 +75,7 @@ public class PlayerRespawn : MonoBehaviour
     private IEnumerator HandlePlayerDeath()
     {
         animator.Play("Dead");
+        clip.Play();
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
         float animationDuration = stateInfo.length;
         yield return new WaitForSeconds(animationDuration);

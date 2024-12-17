@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Audio;
 public class ObjectCollected1 : MonoBehaviour
 {
     private Animator animator;
@@ -9,6 +9,7 @@ public class ObjectCollected1 : MonoBehaviour
 
     public string collectAnimationTrigger = "Recolect"; // Nombre del Trigger de la animación de explosión
     private ObjectsManager objectsManager;
+    public AudioSource clip;
 
     private void Start()
     {
@@ -24,6 +25,7 @@ public class ObjectCollected1 : MonoBehaviour
         // Si el objeto que colisiona es el jugador 
         if (other.CompareTag("Player") && !isCollected)
         {
+
             isCollected = true;
             if(gameObject.CompareTag("Rayo"))
             {
@@ -44,8 +46,6 @@ public class ObjectCollected1 : MonoBehaviour
                 }
             }
             
-            
-            
             // Reproducir la animación de explosión
             if (animator != null)
             {
@@ -61,10 +61,12 @@ public class ObjectCollected1 : MonoBehaviour
     {
         // Esperar el tiempo que dura la animación de explosión
         float animationDuration = animator.GetCurrentAnimatorStateInfo(0).length;
+        clip.Play();
         yield return new WaitForSeconds(animationDuration);
 
         // Después de la animación, destruir la fruta
         Destroy(gameObject,0.5f); 
+        
     }
 
 }
