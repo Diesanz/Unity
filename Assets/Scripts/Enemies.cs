@@ -21,7 +21,7 @@ public class Enemies : MonoBehaviour
     public float limiteIzquierdo;
     public float limiteDerecho;
     [SerializeField] private float vidaMAX;
-    private float vida;
+    public float vida;
      private bool estaMuerto = false; // Bandera para evitar que el enemigo muera varias veces.
     private float tiempoEntreGolpes = 1f; // Tiempo de cooldown entre golpes
     private float ultimoGolpe = 0f; // Registro del último golpe
