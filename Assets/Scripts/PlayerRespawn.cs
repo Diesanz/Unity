@@ -6,16 +6,18 @@ using UnityEngine.SceneManagement;
 public class PlayerRespawn : MonoBehaviour
 {
     public GameObject[] corazones;
-    private int life;
-    public float invulnerabilityDuration = 0.75f; // Tiempo de invulnerabilidad tras recibir daño
-    private bool isInvulnerable = false; // Controla si el jugador puede recibir daño
+    public int life;
+    public float invulnerabilityDuration = 0.2f; // Tiempo de invulnerabilidad tras recibir daño
+    public bool isInvulnerable = false; // Controla si el jugador puede recibir daño
     private float checkpointPosX, checkpointPosY;
     public Animator animator;
     public float respawnDelay = 0.5f; // Tiempo de espera antes de reiniciar la escena
 
+
     void Start()
     {
         life = corazones.Length;
+
         if (PlayerPrefs.GetFloat("checkpointPosX") != 0)
         {
             transform.position = new Vector2(PlayerPrefs.GetFloat("checkpointPosX"), PlayerPrefs.GetFloat("checkpointPosY"));
@@ -26,17 +28,17 @@ public class PlayerRespawn : MonoBehaviour
     {
         if (life < 1)
         {
-            Destroy(corazones[0].gameObject);
+            corazones[0].gameObject.SetActive(false);
             StartCoroutine(HandlePlayerDeath());
         }
         else if (life < 2)
         {
-            Destroy(corazones[1].gameObject);
+           corazones[1].gameObject.SetActive(false);
             animator.Play("Hit");
         }
         else if (life < 3)
         {
-            Destroy(corazones[2].gameObject);
+            corazones[2].gameObject.SetActive(false);
             animator.Play("Hit");
         }
     }
@@ -61,11 +63,9 @@ public class PlayerRespawn : MonoBehaviour
     {
         isInvulnerable = true; // Activa la invulnerabilidad
 
-
-        yield return new WaitForSeconds(invulnerabilityDuration);
+        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length+0.1f );
 
         isInvulnerable = false; // Desactiva la invulnerabilidad
-
     }
 
     private IEnumerator HandlePlayerDeath()

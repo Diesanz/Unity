@@ -44,7 +44,14 @@ public class SantasMove : MonoBehaviour
 
     private void Update()
     {
-        
+        if (GetComponent<PlayerRespawn>().isInvulnerable)
+        {
+            Debug.Log("Boqq");
+            rb2D.velocity = new Vector2(0, rb2D.velocity.y); // Detener movimiento horizontal
+            animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            return; // Salir del Update
+        }
         // Obtén la entrada del jugador
         input.x = Input.GetAxisRaw("Horizontal"); //Solo movimiento en el eje x
 
@@ -110,9 +117,12 @@ public class SantasMove : MonoBehaviour
         animator.SetBool("Walk", isWalking);
         animator.SetBool("Run", isRunning);
         
-        
+        if (transform.position.y < -1.13f)
+        {
+            // Llama al método para manejar el daño al jugador
+            transform.GetComponent<PlayerRespawn>().PlayerDamaged();
+        }
 
-        
         if(CheckGround.isGround)
         {
             //reiniciar estado

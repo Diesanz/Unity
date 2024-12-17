@@ -7,12 +7,14 @@ public class SnowballLauncher : MonoBehaviour
     public GameObject snowballPrefab;    // Prefab de la bola de nieve
     public Transform firePoint;          // Punto desde donde se lanza la bola de nieve
     public float throwForce = 15f;       // Fuerza de lanzamiento
+    public float throwCooldown = 0.5f;   // Tiempo de espera entre lanzamientos
 
     public Text totalBalls;
     public Text numberBalls;
 
     private SpriteRenderer spriteRenderer;
-    private int numberTotalBalls;
+    private float lastThrowTime;         // Tiempo del último lanzamiento
+    public int numberTotalBalls;
 
     void Start()
     {
@@ -20,25 +22,30 @@ public class SnowballLauncher : MonoBehaviour
         numberTotalBalls = 30;
         numberBalls.text = numberTotalBalls.ToString();
         totalBalls.text = numberTotalBalls.ToString();
+        lastThrowTime = -throwCooldown;  // Permitir lanzar inmediatamente al inicio
     }
+
     void Update()
     {
-        // Verifica si se ha presionado la tecla F
+        // Verifica si se ha presionado la tecla E
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if(numberTotalBalls > 0)
-            {   
-                LaunchSnowball();
-                numberTotalBalls -=1;
-                numberBalls.text = numberTotalBalls.ToString();
-            }
-            else
+            // Comprueba si ha pasado el tiempo suficiente desde el último lanzamiento
+            if (Time.time - lastThrowTime >= throwCooldown)
             {
-                numberBalls.color = Color.red;
+                if (numberTotalBalls > 0)
+                {
+                    LaunchSnowball();
+                    numberTotalBalls -= 1;
+                    numberBalls.text = numberTotalBalls.ToString();
+                    lastThrowTime = Time.time; // Actualiza el tiempo del último lanzamiento
+                }
+                else
+                {
+                    numberBalls.color = Color.red;
+                }
             }
-            
         }
-       
     }
 
     void LaunchSnowball()
@@ -59,5 +66,4 @@ public class SnowballLauncher : MonoBehaviour
             rb2D.AddForce(adjustedLaunchDirection * throwForce, ForceMode2D.Impulse);
         }
     }
-
 }

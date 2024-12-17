@@ -25,7 +25,27 @@ public class ObjectCollected1 : MonoBehaviour
         if (other.CompareTag("Player") && !isCollected)
         {
             isCollected = true;
-
+            if(gameObject.CompareTag("Rayo"))
+            {
+                if(other.GetComponent<PlayerRespawn>().life < 3)
+                {
+                    other.GetComponent<PlayerRespawn>().corazones[other.GetComponent<PlayerRespawn>().life].gameObject.SetActive(true);
+                    other.GetComponent<PlayerRespawn>().life++;
+                }
+               
+            }
+            else if (gameObject.CompareTag("Caramelo"))
+            {
+                if(other.GetComponent<SnowballLauncher>().numberTotalBalls < 30)
+                {
+                    other.GetComponent<SnowballLauncher>().numberTotalBalls += 
+                        (30 - other.GetComponent<SnowballLauncher>().numberTotalBalls > 5) ? 5 : (30 - other.GetComponent<SnowballLauncher>().numberTotalBalls);;
+                    other.GetComponent<SnowballLauncher>().numberBalls.text = other.GetComponent<SnowballLauncher>().numberTotalBalls.ToString();
+                }
+            }
+            
+            
+            
             // Reproducir la animación de explosión
             if (animator != null)
             {
