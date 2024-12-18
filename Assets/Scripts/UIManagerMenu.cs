@@ -6,6 +6,8 @@ using UnityEngine.Audio;
 public class UIManagerMenu : MonoBehaviour
 {
     public GameObject menuPanel;
+    [SerializeField] private AudioSource ambientSound;
+    private bool isSoundOn = true;
     public AudioSource clip;
     public void PlayGame()
     {
@@ -37,6 +39,22 @@ public class UIManagerMenu : MonoBehaviour
     public void PlaySound()
     {
         clip.Play();
+    }
+
+    public void ToggleSound()
+    {
+        // Cambia el estado del sonido
+        isSoundOn = !isSoundOn;
+
+        // Activa o desactiva el sonido
+        if (isSoundOn)
+        {
+            ambientSound.Play();
+        }
+        else
+        {
+            ambientSound.Pause();
+        }
     }
 
 
